@@ -39,8 +39,8 @@ namespace Tcgv.DataReplication.Builders
 
                     if (b.Edges.Count < k)
                     {
-                        b.Add(a);
-                        a.Add(b);
+                        b.Connect(a);
+                        a.Connect(b);
                         Enqueue(groups, b);
                     }
                 }

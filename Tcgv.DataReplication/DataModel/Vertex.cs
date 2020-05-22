@@ -10,22 +10,17 @@ namespace Tcgv.DataReplication.DataModel
             Id = Interlocked.Increment(ref idCounter);
             Edges = new List<Vertex>();
             Items = new List<int>();
+            IsEnabled = true;
             unpropagetedItems = new Queue<int>();
             uncommitedItems = new Queue<int>();
         }
 
-        public Vertex(long id)
-            : this()
-        {
-            Id = id;
-        }
-
         public long Id { get; }
-
         public List<Vertex> Edges { get; }
         public List<int> Items { get; private set; }
+        public bool IsEnabled { get; private set; }
 
-        public void Add(Vertex vertex)
+        public void Connect(Vertex vertex)
         {
             Edges.Add(vertex);
         }
@@ -34,6 +29,11 @@ namespace Tcgv.DataReplication.DataModel
         {
             unpropagetedItems.Enqueue(item);
             Items.Add(item);
+        }
+
+        public void Disable()
+        {
+            IsEnabled = false;
         }
 
         public override string ToString()
@@ -46,9 +46,12 @@ namespace Tcgv.DataReplication.DataModel
             while (unpropagetedItems.Count > 0)
             {
                 var x = unpropagetedItems.Dequeue();
-                foreach (var v in Edges)
-                    if (!v.Items.Contains(x))
-                        v.uncommitedItems.Enqueue(x);
+                if (IsEnabled)
+                {
+                    foreach (var v in Edges)
+                        if (!v.Items.Contains(x))
+                            v.uncommitedItems.Enqueue(x);
+                }
             }
         }
 

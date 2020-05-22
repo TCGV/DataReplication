@@ -8,21 +8,86 @@ namespace Tcgv.DataReplication.DataModel.Tests
     [TestClass()]
     public class GraphTests
     {
-        [TestMethod()]
-        public void CreateGraphTest()
+        [TestInitialize]
+        public void TestInitialize()
         {
+            rd = new Random(Guid.NewGuid().GetHashCode());
+        }
+
+        [TestMethod]
+        public void GraphItem_ZeroDisruption_PropagationTest()
+        {
+            var n = (int)1e3;
             var k = 4;
-            var n = (int)1e4;
+
+            var sourceVertex = 50;
+            var iterations = (int)Math.Ceiling(Math.Log(n, k - 1)) + 1;
+
             var graph = new RandomRegularGraphBuilder().Build(n, k);
 
-            var item = 123456789;
-            graph.Vertices[50].AddItem(item);
+            var item = rd.Next(int.MaxValue);
+            graph.Vertices[sourceVertex].AddItem(item);
 
-            var iterations =
-                (int)Math.Ceiling(Math.Log(graph.Vertices.Length, k - 1)) + 1;
             graph.Propagate(iterations);
 
             Assert.AreEqual(graph.Vertices.Length, graph.Vertices.Count(n => n.Items.Contains(item)));
         }
+
+        [TestMethod]
+        public void GraphItem_MinorDisruption_PropagationTest()
+        {
+            var n = (int)1e3;
+            var k = 4;
+
+            var sourceVertex = 50;
+            var disabled = (int)(0.05 * n);
+            var iterations = (int)Math.Ceiling(Math.Log(n, k - 1)) + 1;
+
+            var graph = new RandomRegularGraphBuilder().Build(n, k);
+
+            var item = rd.Next(int.MaxValue);
+            graph.Vertices[sourceVertex].AddItem(item);
+
+            DisableVertices(graph, disabled, sourceVertex);
+            graph.Propagate(iterations);
+
+            Assert.AreEqual(graph.Vertices.Length, graph.Vertices.Count(n => n.Items.Contains(item)));
+        }
+
+        [TestMethod]
+        public void GraphItem_MajorDisruption_PropagationTest()
+        {
+            var n = (int)1e3;
+            var k = 4;
+
+            var sourceVertex = 50;
+            var disabled = (int)(0.50 * n);
+            var iterations = (int)Math.Ceiling(Math.Log(n, k - 1)) + 1;
+
+            var graph = new RandomRegularGraphBuilder().Build(n, k);
+
+            var item = rd.Next(int.MaxValue);
+            graph.Vertices[sourceVertex].AddItem(item);
+
+            DisableVertices(graph, disabled, sourceVertex);
+            graph.Propagate(iterations);
+
+            Assert.IsTrue(graph.Vertices.Count(n => n.Items.Contains(item)) < 500);
+        }
+
+        private void DisableVertices(Graph graph, int count, int source)
+        {
+            while (count > 0)
+            {
+                var i = rd.Next(graph.Vertices.Length);
+                if (graph.Vertices[i].IsEnabled && i != source)
+                {
+                    graph.Vertices[i].Disable();
+                    count--;
+                }
+            }
+        }
+
+        private Random rd;
     }
 }
