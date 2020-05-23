@@ -11,10 +11,9 @@ namespace Tcgv.DataReplication.Builders
         {
             ValidateParameters(vertices.Count, k);
 
-            Initialize(vertices.Count, k);
-
             for (int i = 0; i < maxGraphIteration; i++)
             {
+                Initialize(vertices.Count, k);
                 var g = BuildCandidate();
                 if (IsKRegular(g, k))
                     return new Graph(vertices.ToArray(), g);

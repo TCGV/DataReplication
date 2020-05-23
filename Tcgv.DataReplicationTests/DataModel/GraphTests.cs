@@ -8,12 +8,6 @@ namespace Tcgv.DataReplication.DataModel.Tests
     [TestClass()]
     public class GraphTests
     {
-        [TestInitialize]
-        public void TestInitialize()
-        {
-            rd = new Random(Guid.NewGuid().GetHashCode());
-        }
-
         [TestMethod]
         public void GraphItem_ZeroDisruption_PropagationTest()
         {
@@ -25,7 +19,7 @@ namespace Tcgv.DataReplication.DataModel.Tests
 
             var graph = new RandomRegularGraphBuilder().Build(n, k);
 
-            var item = rd.Next(int.MaxValue);
+            var item = Guid.NewGuid().GetHashCode();
             graph.Vertices[sourceVertex].AddItem(item);
 
             graph.Propagate(iterations);
@@ -45,10 +39,10 @@ namespace Tcgv.DataReplication.DataModel.Tests
 
             var graph = new RandomRegularGraphBuilder().Build(n, k);
 
-            var item = rd.Next(int.MaxValue);
+            var item = Guid.NewGuid().GetHashCode();
             graph.Vertices[sourceVertex].AddItem(item);
 
-            DisableVertices(graph, disabled, sourceVertex);
+            graph.DisableRandomVertices(disabled, sourceVertex);
             graph.Propagate(iterations);
 
             Assert.AreEqual(graph.Vertices.Length, graph.Vertices.Count(n => n.Items.Contains(item)));
@@ -66,28 +60,13 @@ namespace Tcgv.DataReplication.DataModel.Tests
 
             var graph = new RandomRegularGraphBuilder().Build(n, k);
 
-            var item = rd.Next(int.MaxValue);
+            var item = Guid.NewGuid().GetHashCode();
             graph.Vertices[sourceVertex].AddItem(item);
 
-            DisableVertices(graph, disabled, sourceVertex);
+            graph.DisableRandomVertices(disabled, sourceVertex);
             graph.Propagate(iterations);
 
             Assert.IsTrue(graph.Vertices.Count(n => n.Items.Contains(item)) < 500);
         }
-
-        private void DisableVertices(Graph graph, int count, int source)
-        {
-            while (count > 0)
-            {
-                var i = rd.Next(graph.Vertices.Length);
-                if (graph.Vertices[i].IsEnabled && i != source)
-                {
-                    graph.Vertices[i].Disable();
-                    count--;
-                }
-            }
-        }
-
-        private Random rd;
     }
 }

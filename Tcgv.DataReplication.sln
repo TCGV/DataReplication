@@ -3,9 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.29519.87
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tcgv.DataReplication", "Tcgv.DataReplication\Tcgv.DataReplication.csproj", "{818E53AC-1F66-4EDE-8AAE-3BDF0DF32891}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tcgv.DataReplication", "Tcgv.DataReplication\Tcgv.DataReplication.csproj", "{818E53AC-1F66-4EDE-8AAE-3BDF0DF32891}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tcgv.DataReplicationTests", "Tcgv.DataReplicationTests\Tcgv.DataReplicationTests.csproj", "{86A879BC-38AC-4E42-8D80-7184AF198870}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tcgv.DataReplicationTests", "Tcgv.DataReplicationTests\Tcgv.DataReplicationTests.csproj", "{86A879BC-38AC-4E42-8D80-7184AF198870}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tcgv.DataReplicationApp", "Tcgv.DataReplicationApp\Tcgv.DataReplicationApp.csproj", "{0B1B71B8-99CA-46B7-8FF6-30C58E8BCB95}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +23,10 @@ Global
 		{86A879BC-38AC-4E42-8D80-7184AF198870}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{86A879BC-38AC-4E42-8D80-7184AF198870}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{86A879BC-38AC-4E42-8D80-7184AF198870}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0B1B71B8-99CA-46B7-8FF6-30C58E8BCB95}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0B1B71B8-99CA-46B7-8FF6-30C58E8BCB95}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0B1B71B8-99CA-46B7-8FF6-30C58E8BCB95}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0B1B71B8-99CA-46B7-8FF6-30C58E8BCB95}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Tcgv.DataReplication.DataModel
 {
@@ -26,6 +28,13 @@ namespace Tcgv.DataReplication.DataModel
 
         public Vertex[] Vertices { get; private set; }
 
+        public int GetDiameter()
+        {
+            return Vertices.Max(
+                v => v.GetMaxShortestPathLength(Vertices.Length)
+            );
+        }
+
         public void Propagate(int iterations)
         {
             for (int i = 0; i < iterations; i++)
@@ -34,6 +43,20 @@ namespace Tcgv.DataReplication.DataModel
                     v.Propagate();
                 foreach (var v in Vertices)
                     v.Commit();
+            }
+        }
+
+        public void DisableRandomVertices(int count, int exclusiveIndex)
+        {
+            var rd = new Random(Guid.NewGuid().GetHashCode());
+            while (count > 0)
+            {
+                var i = rd.Next(Vertices.Length);
+                if (Vertices[i].IsEnabled && i != exclusiveIndex)
+                {
+                    Vertices[i].Disable();
+                    count--;
+                }
             }
         }
     }

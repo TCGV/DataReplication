@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading;
 
 namespace Tcgv.DataReplication.DataModel
@@ -29,6 +30,33 @@ namespace Tcgv.DataReplication.DataModel
         {
             unpropagetedItems.Enqueue(item);
             Items.Add(item);
+        }
+
+        public int GetMaxShortestPathLength(int expectedVerticesCount)
+        {
+            var d = 0;
+            var queue = new Queue<dynamic>();
+            var visited = new HashSet<Vertex>();
+
+            queue.Enqueue(new { V = this, D = 0 });
+            visited.Add(this);
+
+            while (queue.Count > 0)
+            {
+                var x = queue.Dequeue();
+                d = Math.Max(d, x.D);
+                foreach (var c in x.V.Edges)
+                {
+                    if (!visited.Contains(c))
+                    {
+                        queue.Enqueue(new { V = c, D = x.D + 1 });
+                        visited.Add(c);
+                    }
+                }
+            }
+
+            return visited.Count == expectedVerticesCount ?
+                d : -1;
         }
 
         public void Disable()

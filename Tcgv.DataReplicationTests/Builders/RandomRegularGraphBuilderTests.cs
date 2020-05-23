@@ -12,21 +12,21 @@ namespace Tcgv.DataReplication.Builder.Tests
         [ExpectedException(typeof(PositiveParameterException))]
         public void Build_N_Zero_Test()
         {
-            new RandomRegularGraphBuilder().Build(0, 5);
+            BuildRRG(0, 5);
         }
 
         [TestMethod]
         [ExpectedException(typeof(PositiveParameterException))]
         public void Build_K_Zero_Test()
         {
-            new RandomRegularGraphBuilder().Build(5, 0);
+            BuildRRG(5, 0);
         }
 
         [TestMethod]
         [ExpectedException(typeof(GraphOrderException))]
         public void Build_Invalid_Order_Test()
         {
-            new RandomRegularGraphBuilder().Build(5, 5);
+            BuildRRG(5, 5);
         }
 
         [TestMethod]
@@ -41,13 +41,32 @@ namespace Tcgv.DataReplication.Builder.Tests
             BuildAndAssert(1000, 4);
         }
 
+        [TestMethod]
+        public void RRG_MaxDiameter_Test()
+        {
+            var n = (int)1e3;
+            Assert.IsTrue(BuildRRG(n, 3).GetDiameter() <= 500);
+            Assert.IsTrue(BuildRRG(n, 3).GetDiameter() <= 13);
+            Assert.IsTrue(BuildRRG(n, 4).GetDiameter() <= 9);
+            Assert.IsTrue(BuildRRG(n, 5).GetDiameter() <= 7);
+            Assert.IsTrue(BuildRRG(n, 6).GetDiameter() <= 6);
+            Assert.IsTrue(BuildRRG(n, 7).GetDiameter() <= 6);
+            Assert.IsTrue(BuildRRG(n, 8).GetDiameter() <= 5);
+        }
+
         private static void BuildAndAssert(int n, int k)
         {
-            var b = new RandomRegularGraphBuilder();
-            var g = b.Build(n, k);
+            DataModel.Graph g = BuildRRG(n, k);
 
             Assert.AreEqual(n, g.Vertices.Length);
             Assert.IsTrue(g.Vertices.All(v => v.Edges.Count == k));
+        }
+
+        private static DataModel.Graph BuildRRG(int n, int k)
+        {
+            var b = new RandomRegularGraphBuilder();
+            var g = b.Build(n, k);
+            return g;
         }
     }
 }
