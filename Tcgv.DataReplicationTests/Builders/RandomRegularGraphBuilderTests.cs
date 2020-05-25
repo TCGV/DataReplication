@@ -32,13 +32,19 @@ namespace Tcgv.DataReplication.Builder.Tests
         [TestMethod]
         public void Build_N5_K2_Test()
         {
-            BuildAndAssert(5, 2);
+            BuildAndAssertDegree(5, 2);
+        }
+
+        [TestMethod]
+        public void Build_N11_K3_Test()
+        {
+            BuildAndAssertDegree(11, 3);
         }
 
         [TestMethod]
         public void Build_N1000_K4_Test()
         {
-            BuildAndAssert(1000, 4);
+            BuildAndAssertDegree(1000, 4);
         }
 
         [TestMethod]
@@ -54,12 +60,12 @@ namespace Tcgv.DataReplication.Builder.Tests
             Assert.IsTrue(BuildRRG(n, 8).GetDiameter() <= 5);
         }
 
-        private static void BuildAndAssert(int n, int k)
+        private static void BuildAndAssertDegree(int n, int k)
         {
             DataModel.Graph g = BuildRRG(n, k);
 
             Assert.AreEqual(n, g.Vertices.Length);
-            Assert.IsTrue(g.Vertices.All(v => v.Edges.Count == k));
+            Assert.IsTrue(g.Vertices.All(v => v.Neighbors.Count == k));
         }
 
         private static DataModel.Graph BuildRRG(int n, int k)

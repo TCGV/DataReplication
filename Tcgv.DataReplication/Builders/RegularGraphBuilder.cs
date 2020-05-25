@@ -19,7 +19,7 @@ namespace Tcgv.DataReplication.Builders
             var idx = 0;
             foreach (var a in g.Vertices)
             {
-                for (int i = 0; a.Edges.Count < k && groups[k].Count < g.Vertices.Length; i++)
+                for (int i = 0; a.Neighbors.Count < k && groups[k].Count < g.Vertices.Length; i++)
                 {
                     while (groups[idx].Count == 0)
                         idx++;
@@ -28,7 +28,7 @@ namespace Tcgv.DataReplication.Builders
                     do
                     {
                         b = groups[idx].Dequeue();
-                        if (b.Edges.Count != idx || b == a || a.Edges.Contains(b))
+                        if (b.Neighbors.Count != idx || b == a || a.Neighbors.Contains(b))
                         {
                             Enqueue(groups, b);
                             while (groups[idx].Count == 0)
@@ -37,7 +37,7 @@ namespace Tcgv.DataReplication.Builders
                         }
                     } while (b == null);
 
-                    if (b.Edges.Count < k)
+                    if (b.Neighbors.Count < k)
                     {
                         b.Connect(a);
                         a.Connect(b);
@@ -51,7 +51,7 @@ namespace Tcgv.DataReplication.Builders
 
         private static void Enqueue(Queue<Vertex>[] groups, Vertex b)
         {
-            groups[b.Edges.Count].Enqueue(b);
+            groups[b.Neighbors.Count].Enqueue(b);
         }
     }
 }

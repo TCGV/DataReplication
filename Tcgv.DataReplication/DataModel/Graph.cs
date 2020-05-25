@@ -22,7 +22,7 @@ namespace Tcgv.DataReplication.DataModel
             for (int i = 0; i < vertices.Length; i++)
             {
                 foreach (var e in edges[i])
-                    vertices[i].Edges.Add(vertices[e]);
+                    vertices[i].Neighbors.Add(vertices[e]);
             }
         }
 
@@ -33,6 +33,46 @@ namespace Tcgv.DataReplication.DataModel
             return Vertices.Max(
                 v => v.GetMaxShortestPathLength(Vertices.Length)
             );
+        }
+
+        public Vertex[] GetShortestPath(Vertex from, Vertex to)
+        {
+            var queue = new Queue<dynamic>();
+            var visited = new HashSet<Vertex>();
+
+            dynamic q = new { V = from, Length = 1 };
+            queue.Enqueue(q);
+            visited.Add(from);
+
+            while (queue.Count > 0 && !visited.Contains(to))
+            {
+                var x = queue.Dequeue();
+                foreach (var c in x.V.Neighbors)
+                {
+                    if (!visited.Contains(c))
+                    {
+                        q = new { V = c, P = x, Length = x.Length + 1 };
+                        queue.Enqueue(q);
+                        visited.Add(c);
+                        if (c == to)
+                            break;
+                    }
+                }
+            }
+
+            if (queue.Count > 0)
+            {
+                var path = new Vertex[q.Length];
+                int i = path.Length;
+                while (--i >= 0)
+                {
+                    path[i] = q.V;
+                    if (i > 0)
+                        q = q.P;
+                }
+                return path;
+            }
+            return null;
         }
 
         public void Propagate(int iterations)

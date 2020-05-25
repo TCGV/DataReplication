@@ -68,5 +68,29 @@ namespace Tcgv.DataReplication.DataModel.Tests
 
             Assert.IsTrue(graph.Vertices.Count(n => n.Items.Contains(item)) < 500);
         }
+
+        [TestMethod()]
+        public void GetShortestPathToTest()
+        {
+            var vertices = new Vertex[11];
+            for (int i = 0; i < vertices.Length; i++)
+                vertices[i] = new Vertex();
+
+            vertices[0].Connect(vertices[1], vertices[2], vertices[3]);
+            vertices[1].Connect(vertices[4]);
+            vertices[2].Connect(vertices[5]);
+            vertices[3].Connect(vertices[6]);
+            vertices[4].Connect(vertices[9]);
+            vertices[5].Connect(vertices[8]);
+            vertices[6].Connect(vertices[7]);
+            vertices[7].Connect(vertices[2], vertices[8]);
+            vertices[8].Connect(vertices[9]);
+            vertices[9].Connect(vertices[10]);
+
+            var g = new Graph(vertices);
+            Assert.AreEqual(null, g.GetShortestPath(vertices[5], vertices[7]));
+            Assert.AreEqual(4, g.GetShortestPath(vertices[6], vertices[5]).Length);
+            Assert.AreEqual(5, g.GetShortestPath(vertices[0], vertices[10]).Length);
+        }
     }
 }

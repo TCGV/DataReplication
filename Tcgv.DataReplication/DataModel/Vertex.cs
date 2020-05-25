@@ -9,7 +9,7 @@ namespace Tcgv.DataReplication.DataModel
         public Vertex()
         {
             Id = Interlocked.Increment(ref idCounter);
-            Edges = new List<Vertex>();
+            Neighbors = new List<Vertex>();
             Items = new List<int>();
             IsEnabled = true;
             unpropagetedItems = new Queue<int>();
@@ -17,13 +17,14 @@ namespace Tcgv.DataReplication.DataModel
         }
 
         public long Id { get; }
-        public List<Vertex> Edges { get; }
+        public List<Vertex> Neighbors { get; }
         public List<int> Items { get; private set; }
         public bool IsEnabled { get; private set; }
 
-        public void Connect(Vertex vertex)
+        public void Connect(params Vertex[] vertices)
         {
-            Edges.Add(vertex);
+            foreach (var v in vertices)
+                Neighbors.Add(v);
         }
 
         public void AddItem(int item)
@@ -45,7 +46,7 @@ namespace Tcgv.DataReplication.DataModel
             {
                 var x = queue.Dequeue();
                 d = Math.Max(d, x.D);
-                foreach (var c in x.V.Edges)
+                foreach (var c in x.V.Neighbors)
                 {
                     if (!visited.Contains(c))
                     {
@@ -76,7 +77,7 @@ namespace Tcgv.DataReplication.DataModel
                 var x = unpropagetedItems.Dequeue();
                 if (IsEnabled)
                 {
-                    foreach (var v in Edges)
+                    foreach (var v in Neighbors)
                         if (!v.Items.Contains(x))
                             v.uncommitedItems.Enqueue(x);
                 }

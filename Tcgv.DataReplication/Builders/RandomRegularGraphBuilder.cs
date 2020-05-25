@@ -74,7 +74,7 @@ namespace Tcgv.DataReplication.Builders
 
         private void PairNewPoint()
         {
-            if (u.Count > 0)
+            if (u.Count > 1)
             {
                 var point = GetRandomPoint();
 
@@ -143,6 +143,6 @@ namespace Tcgv.DataReplication.Builders
 
         private static int maxPairIteration = 100000;
         private static int maxGraphIteration = 100;
-        private static Random rd = new Random(DateTime.UtcNow.Ticks.GetHashCode());
+        private static Random rd = new Random(Guid.NewGuid().GetHashCode());
     }
 }
