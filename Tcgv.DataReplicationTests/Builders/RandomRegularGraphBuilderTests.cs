@@ -1,6 +1,7 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Linq;
 using Tcgv.DataReplication.Builders;
+using Tcgv.DataReplication.DataModel;
 using Tcgv.DataReplication.Exceptions;
 
 namespace Tcgv.DataReplication.Builder.Tests
@@ -48,10 +49,21 @@ namespace Tcgv.DataReplication.Builder.Tests
         }
 
         [TestMethod]
+        public void RRG_Connectivity_Test()
+        {
+            var n = (int)1e3;
+            Assert.AreEqual(3, BuildRRG(n, 3).GetConnectivity());
+            Assert.AreEqual(4, BuildRRG(n, 4).GetConnectivity());
+            Assert.AreEqual(5, BuildRRG(n, 5).GetConnectivity());
+            Assert.AreEqual(6, BuildRRG(n, 6).GetConnectivity());
+            Assert.AreEqual(7, BuildRRG(n, 7).GetConnectivity());
+            Assert.AreEqual(8, BuildRRG(n, 8).GetConnectivity());
+        }
+
+        [TestMethod]
         public void RRG_MaxDiameter_Test()
         {
             var n = (int)1e3;
-            Assert.IsTrue(BuildRRG(n, 3).GetDiameter() <= 500);
             Assert.IsTrue(BuildRRG(n, 3).GetDiameter() <= 13);
             Assert.IsTrue(BuildRRG(n, 4).GetDiameter() <= 9);
             Assert.IsTrue(BuildRRG(n, 5).GetDiameter() <= 7);
@@ -60,15 +72,36 @@ namespace Tcgv.DataReplication.Builder.Tests
             Assert.IsTrue(BuildRRG(n, 8).GetDiameter() <= 5);
         }
 
-        private static void BuildAndAssertDegree(int n, int k)
+        [TestMethod]
+        public void RRG_InterGraph_Connectivity_Test()
         {
-            DataModel.Graph g = BuildRRG(n, k);
+            var n = (int)1e2;
 
-            Assert.AreEqual(n, g.Vertices.Length);
-            Assert.IsTrue(g.Vertices.All(v => v.Neighbors.Count == k));
+            var g1 = BuildRRG(n, 15);
+            var g2 = BuildRRG(n, 15);
+            Assert.AreEqual(15, g1.GetConnectivity());
+            Assert.AreEqual(15, g2.GetConnectivity());
+
+            g1.Vertices[50].AddNeighbors(g2.Vertices[51]);
+            g1.Vertices[51].AddNeighbors(g2.Vertices[52]);
+            g1.Vertices[52].AddNeighbors(g2.Vertices[53]);
+
+            var g = new Graph(g1.Vertices.Union(g2.Vertices).ToArray());
+            Assert.AreEqual(3, g.GetConnectivity());
         }
 
-        private static DataModel.Graph BuildRRG(int n, int k)
+        private static void BuildAndAssertDegree(int n, int k)
+        {
+            var g = BuildRRG(n, k);
+
+            Assert.AreEqual(n, g.Vertices.Length);
+            if (g.Vertices.Length % 2 == 0)
+                Assert.IsTrue(g.Vertices.All(v => v.Neighbors.Count == k));
+            else
+                Assert.IsTrue(g.Vertices.Count(v => v.Neighbors.Count == k) >= g.Vertices.Length - 1);
+        }
+
+        private static Graph BuildRRG(int n, int k)
         {
             var b = new RandomRegularGraphBuilder();
             var g = b.Build(n, k);

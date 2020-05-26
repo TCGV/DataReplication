@@ -72,25 +72,43 @@ namespace Tcgv.DataReplication.DataModel.Tests
         [TestMethod()]
         public void GetShortestPathToTest()
         {
+            var g = BuildSampleGraph();
+
+            Assert.AreEqual(null, g.GetShortestPath(g.Vertices[5], g.Vertices[7]));
+            Assert.AreEqual(4, g.GetShortestPath(g.Vertices[6], g.Vertices[5]).Length);
+            Assert.AreEqual(5, g.GetShortestPath(g.Vertices[0], g.Vertices[10]).Length);
+        }
+
+        [TestMethod()]
+        public void GetConnectivityTest()
+        {
+            var g = BuildSampleGraph();
+
+            Assert.AreEqual(1, g.GetConnectivity(g.Vertices[5], g.Vertices[7]));
+            Assert.AreEqual(1, g.GetConnectivity(g.Vertices[6], g.Vertices[5]));
+            Assert.AreEqual(2, g.GetConnectivity(g.Vertices[0], g.Vertices[2]));
+            Assert.AreEqual(3, g.GetConnectivity(g.Vertices[0], g.Vertices[9]));
+        }
+
+        private static Graph BuildSampleGraph()
+        {
             var vertices = new Vertex[11];
             for (int i = 0; i < vertices.Length; i++)
                 vertices[i] = new Vertex();
 
-            vertices[0].Connect(vertices[1], vertices[2], vertices[3]);
-            vertices[1].Connect(vertices[4]);
-            vertices[2].Connect(vertices[5]);
-            vertices[3].Connect(vertices[6]);
-            vertices[4].Connect(vertices[9]);
-            vertices[5].Connect(vertices[8]);
-            vertices[6].Connect(vertices[7]);
-            vertices[7].Connect(vertices[2], vertices[8]);
-            vertices[8].Connect(vertices[9]);
-            vertices[9].Connect(vertices[10]);
+            vertices[0].AddNeighbors(vertices[1], vertices[2], vertices[3]);
+            vertices[1].AddNeighbors(vertices[4]);
+            vertices[2].AddNeighbors(vertices[5]);
+            vertices[3].AddNeighbors(vertices[6]);
+            vertices[4].AddNeighbors(vertices[9]);
+            vertices[5].AddNeighbors(vertices[8]);
+            vertices[6].AddNeighbors(vertices[7]);
+            vertices[7].AddNeighbors(vertices[2], vertices[8], vertices[9]);
+            vertices[8].AddNeighbors(vertices[9]);
+            vertices[9].AddNeighbors(vertices[10]);
 
             var g = new Graph(vertices);
-            Assert.AreEqual(null, g.GetShortestPath(vertices[5], vertices[7]));
-            Assert.AreEqual(4, g.GetShortestPath(vertices[6], vertices[5]).Length);
-            Assert.AreEqual(5, g.GetShortestPath(vertices[0], vertices[10]).Length);
+            return g;
         }
     }
 }

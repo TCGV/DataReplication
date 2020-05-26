@@ -21,7 +21,7 @@ namespace Tcgv.DataReplication.DataModel
         public List<int> Items { get; private set; }
         public bool IsEnabled { get; private set; }
 
-        public void Connect(params Vertex[] vertices)
+        public void AddNeighbors(params Vertex[] vertices)
         {
             foreach (var v in vertices)
                 Neighbors.Add(v);
@@ -36,21 +36,21 @@ namespace Tcgv.DataReplication.DataModel
         public int GetMaxShortestPathLength(int expectedVerticesCount)
         {
             var d = 0;
-            var queue = new Queue<dynamic>();
+            var queue = new Queue<VertexDFSData>();
             var visited = new HashSet<Vertex>();
 
-            queue.Enqueue(new { V = this, D = 0 });
+            queue.Enqueue(new VertexDFSData { Vertex = this, Length = 0 });
             visited.Add(this);
 
             while (queue.Count > 0)
             {
                 var x = queue.Dequeue();
-                d = Math.Max(d, x.D);
-                foreach (var c in x.V.Neighbors)
+                d = Math.Max(d, x.Length);
+                foreach (var c in x.Vertex.Neighbors)
                 {
                     if (!visited.Contains(c))
                     {
-                        queue.Enqueue(new { V = c, D = x.D + 1 });
+                        queue.Enqueue(new VertexDFSData { Vertex = c, Length = x.Length + 1 });
                         visited.Add(c);
                     }
                 }

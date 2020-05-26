@@ -35,44 +35,28 @@ namespace Tcgv.DataReplication.DataModel
             );
         }
 
+        public int GetConnectivity()
+        {
+            var min = -1;
+            for (int i = 1; i < Vertices.Length; i++)
+            {
+                var c = GetConnectivity(Vertices[0], Vertices[i]);
+                if (min < 0 || c < min)
+                    min = c;
+            }
+            return min;
+        }
+
+        public int GetConnectivity(Vertex from, Vertex to)
+        {
+            var avoid = new HashSet<Point>();
+            return GetConnectivity(from, to, avoid) +
+                GetConnectivity(to, from, avoid);
+        }
+
         public Vertex[] GetShortestPath(Vertex from, Vertex to)
         {
-            var queue = new Queue<dynamic>();
-            var visited = new HashSet<Vertex>();
-
-            dynamic q = new { V = from, Length = 1 };
-            queue.Enqueue(q);
-            visited.Add(from);
-
-            while (queue.Count > 0 && !visited.Contains(to))
-            {
-                var x = queue.Dequeue();
-                foreach (var c in x.V.Neighbors)
-                {
-                    if (!visited.Contains(c))
-                    {
-                        q = new { V = c, P = x, Length = x.Length + 1 };
-                        queue.Enqueue(q);
-                        visited.Add(c);
-                        if (c == to)
-                            break;
-                    }
-                }
-            }
-
-            if (queue.Count > 0)
-            {
-                var path = new Vertex[q.Length];
-                int i = path.Length;
-                while (--i >= 0)
-                {
-                    path[i] = q.V;
-                    if (i > 0)
-                        q = q.P;
-                }
-                return path;
-            }
-            return null;
+            return GetShortestPath(from, to, new HashSet<Point>());
         }
 
         public void Propagate(int iterations)
@@ -89,6 +73,7 @@ namespace Tcgv.DataReplication.DataModel
         public void DisableRandomVertices(int count, int exclusiveIndex)
         {
             var rd = new Random(Guid.NewGuid().GetHashCode());
+
             while (count > 0)
             {
                 var i = rd.Next(Vertices.Length);
@@ -98,6 +83,69 @@ namespace Tcgv.DataReplication.DataModel
                     count--;
                 }
             }
+        }
+
+        private int GetConnectivity(Vertex from, Vertex to, HashSet<Point> avoid)
+        {
+            int i = 0;
+            Vertex[] path = new Vertex[0];
+
+            while (path != null)
+            {
+                path = GetShortestPath(from, to, avoid);
+                if (path != null)
+                {
+                    i++;
+                    for (int j = 1; j < path.Length; j++)
+                    {
+                        avoid.Add(new Point(path[j - 1].Id, path[j].Id));
+                        avoid.Add(new Point(path[j].Id, path[j - 1].Id));
+                    }
+                }
+            }
+
+            return i;
+        }
+
+        private Vertex[] GetShortestPath(Vertex from, Vertex to, HashSet<Point> avoid)
+        {
+            var queue = new Queue<VertexDFSData>();
+            var visited = new HashSet<Point>(avoid);
+
+            var q = new VertexDFSData { Vertex = from, Length = 1 };
+            queue.Enqueue(q);
+
+            while (queue.Count > 0 && q.Vertex != to)
+            {
+                var x = queue.Dequeue();
+                foreach (var c in x.Vertex.Neighbors)
+                {
+                    var p = new Point(x.Vertex.Id, c.Id);
+                    if (!visited.Contains(p))
+                    {
+                        q = new VertexDFSData { Vertex = c, Previous = x, Length = x.Length + 1 };
+                        queue.Enqueue(q);
+                        visited.Add(p);
+                        if (c == to)
+                            break;
+                    }
+                }
+            }
+
+            if (q.Vertex == to)
+            {
+                var path = new Vertex[q.Length];
+                int i = path.Length;
+                while (--i >= 0)
+                {
+                    path[i] = q.Vertex;
+                    if (i > 0)
+                        q = q.Previous;
+                }
+                return path;
+            }
+
+            return null;
         }
     }
 }

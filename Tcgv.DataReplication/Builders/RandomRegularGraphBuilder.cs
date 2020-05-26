@@ -42,16 +42,17 @@ namespace Tcgv.DataReplication.Builders
 
         private HashSet<int>[] BuildCandidate()
         {
-            for (int i = 0; i < maxPairIteration; i++)
+            for (int i = 0; i < maxPairIteration && u.Count > 1; i++)
                 PairNewPoint();
             return BuildGraph();
         }
 
         private bool IsKRegular(HashSet<int>[] g, int k)
         {
+            var c = 0;
             for (int i = 0; i < g.Length; i++)
             {
-                if (g[i].Count != k)
+                if (g[i].Count != k && c++ > 0)
                     return false;
             }
             return true;
@@ -74,20 +75,17 @@ namespace Tcgv.DataReplication.Builders
 
         private void PairNewPoint()
         {
-            if (u.Count > 1)
-            {
-                var point = GetRandomPoint();
+            var point = GetRandomPoint();
 
-                if (IsSuitable(point))
-                {
-                    var p = new Point(
-                        GetGroupIndexOfValue(point.X),
-                        GetGroupIndexOfValue(point.Y)
-                    );
-                    pairs.Add(p);
-                    u.Remove(point.Y);
-                    u.Remove(point.X);
-                }
+            if (IsSuitable(point))
+            {
+                var p = new Point(
+                    GetGroupIndexOfValue(point.X),
+                    GetGroupIndexOfValue(point.Y)
+                );
+                pairs.Add(p);
+                u.Remove(point.Y);
+                u.Remove(point.X);
             }
         }
 

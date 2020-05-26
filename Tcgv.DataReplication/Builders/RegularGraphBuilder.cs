@@ -39,8 +39,8 @@ namespace Tcgv.DataReplication.Builders
 
                     if (b.Neighbors.Count < k)
                     {
-                        b.Connect(a);
-                        a.Connect(b);
+                        b.AddNeighbors(a);
+                        a.AddNeighbors(b);
                         Enqueue(groups, b);
                     }
                 }
