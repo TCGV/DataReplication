@@ -70,7 +70,7 @@ namespace Tcgv.DataReplication.DataModel.Tests
         }
 
         [TestMethod()]
-        public void GetShortestPathToTest()
+        public void GetShortestPathTest()
         {
             var g = BuildSampleGraph();
 
