@@ -10,11 +10,15 @@ namespace Tcgv.DataReplicationApp
     {
         static void Main(string[] args)
         {
-            //var n = (int)1e4;
-            //var k = 8;
-            //int iterations = (int)Math.Ceiling(Math.Log(n, k - 1));
-            //SimulateReplications(n, k, iterations);
+            MeasureDiameters();
 
+            RunSimulations();
+
+            Console.ReadKey();
+        }
+
+        private static void MeasureDiameters()
+        {
             for (int k = 3; k <= 9; k += 2)
             {
                 Console.WriteLine($"N\tDiameter\tVariance\t[k={k}]");
@@ -29,22 +33,28 @@ namespace Tcgv.DataReplicationApp
                     Console.WriteLine($"{n}\t{list.Average().ToString("0.00")}\t{list.StdDev().ToString("0.00")}");
                 }
             }
-
-            Console.ReadKey();
         }
 
-        private static void SimulateReplications(int n, int k, int iterations)
+        private static void RunSimulations()
         {
-            Console.WriteLine($"Disruption\tIterations\t[n={n}, k={k}]");
+            var n = (int)1e3;
+            for (int k = 4; k <= 12; k += 4)
+                SimulateReplications(n, k);
+        }
+
+        private static void SimulateReplications(int n, int r)
+        {
+            Console.WriteLine($"Disruption\tIterations");
 
             for (double perc = 0; perc < 0.5; perc += 0.05)
             {
                 var reached = -1;
+                int iterations = 1;
                 int disabled = (int)(perc * n);
 
                 for (; iterations < n; iterations++)
                 {
-                    var graph = new RandomRegularGraphBuilder().Build(n, k);
+                    var graph = new RandomRegularGraphBuilder().Build(n, r);
 
                     var sourceVertex = 50; // Any
                     var item = Guid.NewGuid().GetHashCode();
@@ -54,7 +64,7 @@ namespace Tcgv.DataReplicationApp
                     graph.Propagate(iterations);
 
                     reached = graph.Vertices.Count(n => n.Items.Contains(item));
-                    if (reached == n)
+                    if (reached == n || iterations > n)
                         break;
                 }
 

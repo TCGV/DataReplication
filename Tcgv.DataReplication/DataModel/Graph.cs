@@ -109,10 +109,20 @@ namespace Tcgv.DataReplication.DataModel
 
         private Vertex[] GetShortestPath(Vertex from, Vertex to, HashSet<Point> avoid)
         {
+            var q = DFS(from, to, avoid);
+
+            if (q.Vertex == to)
+                return ExtractPath(q);
+
+            return null;
+        }
+
+        private static VertexDFSData DFS(Vertex from, Vertex to, HashSet<Point> avoid)
+        {
             var queue = new Queue<VertexDFSData>();
             var visited = new HashSet<Point>(avoid);
-
             var q = new VertexDFSData { Vertex = from, Length = 1 };
+
             queue.Enqueue(q);
 
             while (queue.Count > 0 && q.Vertex != to)
@@ -132,20 +142,20 @@ namespace Tcgv.DataReplication.DataModel
                 }
             }
 
-            if (q.Vertex == to)
-            {
-                var path = new Vertex[q.Length];
-                int i = path.Length;
-                while (--i >= 0)
-                {
-                    path[i] = q.Vertex;
-                    if (i > 0)
-                        q = q.Previous;
-                }
-                return path;
-            }
+            return q;
+        }
 
-            return null;
+        private static Vertex[] ExtractPath(VertexDFSData q)
+        {
+            var path = new Vertex[q.Length];
+            int i = path.Length;
+            while (--i >= 0)
+            {
+                path[i] = q.Vertex;
+                if (i > 0)
+                    q = q.Previous;
+            }
+            return path;
         }
     }
 }

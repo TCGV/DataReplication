@@ -56,8 +56,7 @@ namespace Tcgv.DataReplication.DataModel
                 }
             }
 
-            return visited.Count == expectedVerticesCount ?
-                d : -1;
+            return visited.Count == expectedVerticesCount ? d : -1;
         }
 
         public void Disable()
