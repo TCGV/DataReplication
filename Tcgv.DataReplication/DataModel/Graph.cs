@@ -50,8 +50,7 @@ namespace Tcgv.DataReplication.DataModel
         public int GetConnectivity(Vertex from, Vertex to)
         {
             var avoid = new HashSet<Point>();
-            return GetConnectivity(from, to, avoid) +
-                GetConnectivity(to, from, avoid);
+            return GetConnectivity(from, to, avoid);
         }
 
         public Vertex[] GetShortestPath(Vertex from, Vertex to)

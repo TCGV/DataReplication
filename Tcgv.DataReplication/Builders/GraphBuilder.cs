@@ -6,24 +6,24 @@ namespace Tcgv.DataReplication.Builders
 {
     public abstract class GraphBuilder
     {
-        public Graph Build(int vertices, int k)
+        public Graph Build(int n, int r)
         {
-            ValidateParameters(vertices, k);
+            ValidateParameters(n, r);
             var list = new List<Vertex>();
-            for (int i = 0; i < vertices; i++)
+            for (int i = 0; i < n; i++)
                 list.Add(new Vertex());
-            return Build(list, k);
+            return Build(list, r);
         }
 
-        public abstract Graph Build(List<Vertex> vertices, int k);
+        public abstract Graph Build(List<Vertex> vertices, int r);
 
-        protected void ValidateParameters(int vertices, int k)
+        protected void ValidateParameters(int n, int r)
         {
-            if (vertices <= 0)
-                throw new PositiveParameterException(nameof(vertices));
-            if (k <= 0)
-                throw new PositiveParameterException(nameof(k));
-            if (k > vertices - 1)
+            if (n <= 0)
+                throw new PositiveParameterException(nameof(n));
+            if (r <= 0)
+                throw new PositiveParameterException(nameof(r));
+            if (r > n - 1)
                 throw new GraphOrderException();
         }
     }

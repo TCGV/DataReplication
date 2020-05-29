@@ -9,7 +9,7 @@ namespace Tcgv.DataReplication.DataModel
         public Vertex()
         {
             Id = Interlocked.Increment(ref idCounter);
-            Neighbors = new List<Vertex>();
+            Neighbors = new HashSet<Vertex>();
             Items = new List<int>();
             IsEnabled = true;
             unpropagetedItems = new Queue<int>();
@@ -17,14 +17,17 @@ namespace Tcgv.DataReplication.DataModel
         }
 
         public long Id { get; }
-        public List<Vertex> Neighbors { get; }
+        public HashSet<Vertex> Neighbors { get; }
         public List<int> Items { get; private set; }
         public bool IsEnabled { get; private set; }
 
         public void AddNeighbors(params Vertex[] vertices)
         {
             foreach (var v in vertices)
+            {
                 Neighbors.Add(v);
+                v.Neighbors.Add(this);
+            }
         }
 
         public void AddItem(int item)

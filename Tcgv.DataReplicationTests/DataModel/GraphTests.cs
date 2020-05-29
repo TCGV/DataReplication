@@ -74,7 +74,7 @@ namespace Tcgv.DataReplication.DataModel.Tests
         {
             var g = BuildSampleGraph();
 
-            Assert.AreEqual(null, g.GetShortestPath(g.Vertices[5], g.Vertices[7]));
+            Assert.AreEqual(3, g.GetShortestPath(g.Vertices[5], g.Vertices[7]).Length);
             Assert.AreEqual(4, g.GetShortestPath(g.Vertices[6], g.Vertices[5]).Length);
             Assert.AreEqual(5, g.GetShortestPath(g.Vertices[0], g.Vertices[10]).Length);
         }
@@ -84,9 +84,9 @@ namespace Tcgv.DataReplication.DataModel.Tests
         {
             var g = BuildSampleGraph();
 
-            Assert.AreEqual(1, g.GetConnectivity(g.Vertices[5], g.Vertices[7]));
-            Assert.AreEqual(1, g.GetConnectivity(g.Vertices[6], g.Vertices[5]));
-            Assert.AreEqual(2, g.GetConnectivity(g.Vertices[0], g.Vertices[2]));
+            Assert.AreEqual(2, g.GetConnectivity(g.Vertices[5], g.Vertices[7]));
+            Assert.AreEqual(2, g.GetConnectivity(g.Vertices[6], g.Vertices[5]));
+            Assert.AreEqual(3, g.GetConnectivity(g.Vertices[0], g.Vertices[2]));
             Assert.AreEqual(3, g.GetConnectivity(g.Vertices[0], g.Vertices[9]));
         }
 

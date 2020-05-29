@@ -84,7 +84,7 @@ namespace Tcgv.DataReplication.Builder.Tests
 
             g1.Vertices[50].AddNeighbors(g2.Vertices[51]);
             g1.Vertices[51].AddNeighbors(g2.Vertices[52]);
-            g2.Vertices[52].AddNeighbors(g1.Vertices[53]);
+            g1.Vertices[53].AddNeighbors(g2.Vertices[52]);
 
             var g = new Graph(g1.Vertices.Union(g2.Vertices).ToArray());
             Assert.AreEqual(3, g.GetConnectivity());

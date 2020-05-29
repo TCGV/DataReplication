@@ -19,15 +19,15 @@ namespace Tcgv.DataReplicationApp
 
         private static void MeasureDiameters()
         {
-            for (int k = 3; k <= 9; k += 2)
+            for (int r = 3; r <= 9; r += 2)
             {
-                Console.WriteLine($"N\tDiameter\tVariance\t[k={k}]");
+                Console.WriteLine($"N\tDiameter\tVariance\t[r={r}]");
                 for (int n = 10; n <= 1e3; n += 99)
                 {
                     var list = new List<double>();
                     for (int i = 0; i < 100; i++)
                     {
-                        var graph = new RandomRegularGraphBuilder().Build(n, k);
+                        var graph = new RandomRegularGraphBuilder().Build(n, r);
                         list.Add(graph.GetDiameter());
                     }
                     Console.WriteLine($"{n}\t{list.Average().ToString("0.00")}\t{list.StdDev().ToString("0.00")}");
@@ -38,8 +38,8 @@ namespace Tcgv.DataReplicationApp
         private static void RunSimulations()
         {
             var n = (int)1e3;
-            for (int k = 4; k <= 12; k += 4)
-                SimulateReplications(n, k);
+            for (int r = 4; r <= 12; r += 4)
+                SimulateReplications(n, r);
         }
 
         private static void SimulateReplications(int n, int r)

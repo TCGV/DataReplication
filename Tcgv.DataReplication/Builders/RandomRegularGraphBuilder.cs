@@ -7,34 +7,34 @@ namespace Tcgv.DataReplication.Builders
 {
     public class RandomRegularGraphBuilder : GraphBuilder
     {
-        public override Graph Build(List<Vertex> vertices, int k)
+        public override Graph Build(List<Vertex> vertices, int r)
         {
-            ValidateParameters(vertices.Count, k);
+            ValidateParameters(vertices.Count, r);
 
             for (int i = 0; i < maxGraphIteration; i++)
             {
-                Initialize(vertices.Count, k);
+                Initialize(vertices.Count, r);
                 var g = BuildCandidate();
-                if (IsKRegular(g, k))
+                if (IsRRegular(g, r))
                     return new Graph(vertices.ToArray(), g);
             }
 
             return null;
         }
 
-        private void Initialize(int n, int k)
+        private void Initialize(int n, int r)
         {
             groups = new List<List<int>>();
             pairs = new List<Point>();
 
             u = new List<int>();
-            for (int i = 1; i < n * k + 1; i++)
+            for (int i = 1; i < n * r + 1; i++)
                 u.Add(i);
 
             for (int i = 0; i < n; i++)
             {
                 var group = new List<int>();
-                for (int j = i * k; j < i * k + k; j++)
+                for (int j = i * r; j < i * r + r; j++)
                     group.Add(u[j]);
                 groups.Add(group);
             }
@@ -47,12 +47,12 @@ namespace Tcgv.DataReplication.Builders
             return BuildGraph();
         }
 
-        private bool IsKRegular(HashSet<int>[] g, int k)
+        private bool IsRRegular(HashSet<int>[] g, int r)
         {
             var c = 0;
             for (int i = 0; i < g.Length; i++)
             {
-                if (g[i].Count != k && c++ > 0)
+                if (g[i].Count != r && c++ > 0)
                     return false;
             }
             return true;
