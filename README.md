@@ -1,7 +1,5 @@
 # DataReplication
-Study of the effect of graph topologies in data replication
 
-## Details
 Graph theory is extensively studied, experimented on and applied to communications networks 📡. Depending on a communication network’s requirements it may benefit from adopting one or another network topology: Point to point, Ring, Star, Tree, Mesh, and so forth.
 
 In this repository I analyze a network topology based on unweighted random regular graphs, and evaluate its robustness for data replication amid partial network disruption.
